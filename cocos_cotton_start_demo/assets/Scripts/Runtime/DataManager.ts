@@ -1,5 +1,7 @@
+import { EventEnum } from './../Enum/index';
 import Singleton from "../Base/Singleton"
 import { ItemStatusEnum, ItemTypeEnum } from "../Enum"
+import EventManager from "./EventManager"
 
 interface IItem {
   status: ItemStatusEnum
@@ -23,5 +25,8 @@ export default class DataManager extends Singleton {
 
   set items(newData) {
     this._items = newData
+
+    // 触发渲染
+    EventManager.Instance.emit(EventEnum.Render)
   }
 }

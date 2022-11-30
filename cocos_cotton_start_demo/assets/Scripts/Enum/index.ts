@@ -15,3 +15,7 @@ export enum ItemTypeEnum {
   Key = "Key",
   Mail = "Mail"
 }
+
+export enum EventEnum {
+  Render = "Render"
+}

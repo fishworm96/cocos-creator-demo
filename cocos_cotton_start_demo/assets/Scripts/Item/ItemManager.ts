@@ -1,11 +1,12 @@
 import { ItemStatusEnum, ItemTypeEnum } from './../Enum/index';
 
-import { _decorator, Component, Node, SpriteFrame } from 'cc';
+import { Node, Sprite, SpriteFrame, _decorator } from 'cc';
+import { RenderManager } from '../Base/RenderManager';
 import DataManager from '../Runtime/DataManager';
 const { ccclass, property } = _decorator;
 
 @ccclass('ItemManager')
-export class ItemManager extends Component {
+export class ItemManager extends RenderManager {
   label = "物品"
   type: ItemTypeEnum
 
@@ -16,11 +17,33 @@ export class ItemManager extends Component {
   inventorySf: SpriteFrame = null
 
   start() {
+    super.start()
     this.node.on(Node.EventType.TOUCH_START, this.touchEnd, this)
   }
 
   onDestroy() {
+    super.onDestroy()
     this.node.off(Node.EventType.TOUCH_START, this.touchEnd)
+  }
+
+  render() {
+    const status = DataManager.Instance.items.find(i => i.type === this.type)?.status
+    const spriteComponent = this.getComponent(Sprite)
+    switch (status) {
+      case ItemStatusEnum.Scene:
+        this.node.active = true
+        spriteComponent.spriteFrame = this.sceneSf
+        break;
+      case ItemStatusEnum.Inventory:
+        this.node.active = true
+        spriteComponent.spriteFrame = this.inventorySf
+        break;
+      case ItemStatusEnum.Disable:
+        this.node.active = false
+        break;
+      default:
+        break;
+    }
   }
 
   touchEnd() {
@@ -34,6 +57,6 @@ export class ItemManager extends Component {
       item.status = ItemStatusEnum.Inventory
       DataManager.Instance.items = [...DataManager.Instance.items]
     }
-    
+
   }
 }
